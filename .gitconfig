@@ -1,0 +1,9 @@
+[credential]
+	helper = store
+[user]
+	email = internationalhobo@gmail.com
+	name = International Hobo
+[push]
+	default = current
+[core]
+	filemode = true
