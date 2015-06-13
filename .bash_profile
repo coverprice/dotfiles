@@ -34,10 +34,11 @@ alias srestart='systemctl restart'
 
 #Clone the latest dotfiles into the home directory
 function get_dotfiles() {
-	pushd ~ \
-	&& git clone --depth=1 https://github.com/coverprice/dotfiles.git . \
-	&& rm -rf .git \
-	&& popd
+    pushd ~ \
+    && git clone --depth=1 https://github.com/coverprice/dotfiles.git tmpdotfiles \
+    && mv -f tmpdotfiles/.[^.]* . \
+    && rm -rf tmpdotfiles \
+    && popd
 }
 
 # Workaround for an odd problem where systemd-nspawn will dump you into the root directory
