@@ -1,3 +1,6 @@
+"See https://github.com/tpope/vim-pathogen for install instructions
+execute pathogen#infect()
+
 set background=dark
 filetype plugin on
 set tabstop=4
@@ -10,17 +13,22 @@ let &titleold="bash"
 autocmd Filetype python setlocal expandtab
 autocmd Filetype ruby setlocal expandtab
 
+"Note: tmux should be set to use TERM=screen-256color, as xterm-256color does
+"not render correctly.
 function! SetTermTitle(title)
   let &titlestring = a:title
-  if &term == "screen"
-    set t_ts=^[k
-    set t_fs=^[\
+  if &term == "screen" || &term == "screen-256color"
+    set t_ts=k
+    set t_fs=\
   endif
-  if &term == "screen" || &term == "xterm"
-    set title
+  if &term == "screen" || &term == "screen-256color" || &term == "xterm" || &term == "xterm-256color"
+    "set title
   endif
 endfunction
 autocmd BufEnter * :call SetTermTitle(expand("%:t"))
 
-nnoremap <F4> <Esc>:tabprevious<CR>
-nnoremap <F5> <Esc>:tabNext<CR>
+"Note 1: The "^[" special char is achieved by using "Ctrl-V Esc" in insert mode.
+"Note 2: For some reason tmux doesn't allow vim to use the <F4> and <F5> key
+"aliases directly. To see the actual codes inside tmux, run cat and hit the keys.
+nnoremap [14~ <Esc>:N<CR>
+nnoremap [15~ <Esc>:n<CR>
