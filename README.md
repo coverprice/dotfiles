@@ -4,9 +4,10 @@ Repository containing my tool configuration files.
 
 Grabbing the latest version:
 
-    pushd ~
-    TMPDIR=$(mkdir -d)
+    bash -s -ex <<"EOF"
+    cd ~
+    TMPDIR=$(mktemp -d)
     git clone --depth=1 https://github.com/coverprice/dotfiles.git ${TMPDIR}
-    rm ${TMPDIR}/.git
+    rm -rf ${TMPDIR}/.git
     mv -f ${TMPDIR}/.[^.]* .
-    popd
+    EOF
