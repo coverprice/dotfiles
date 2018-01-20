@@ -10,4 +10,6 @@ Grabbing the latest version:
     git clone --depth=1 https://github.com/coverprice/dotfiles.git ${TMPDIR}
     rm -rf ${TMPDIR}/.git
     mv -f ${TMPDIR}/.[^.]* .
+    mkdir -p ~/.vim/autoload ~/.vim/bundle
+    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
     EOF
