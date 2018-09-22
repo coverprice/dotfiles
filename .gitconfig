@@ -3,7 +3,9 @@
 [user]
 	email = 2594816+coverprice@users.noreply.github.com
 	name = James Russell
+	signingkey = 36D690CC
 [push]
 	default = current
 [core]
 	filemode = true
+	excludesfile = /home/jrussell/.gitignore_global
