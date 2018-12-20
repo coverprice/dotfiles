@@ -32,3 +32,16 @@ autocmd BufEnter * :call SetTermTitle(expand("%:t"))
 "aliases directly. To see the actual codes inside tmux, run cat and hit the keys.
 nnoremap [14~ <Esc>:N<CR>
 nnoremap [15~ <Esc>:n<CR>
+
+
+"Syntastic settings (see https://github.com/vim-syntastic/syntastic )
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = ['flake8']
+let g:syntastic_sh_checkers = ['shellcheck']

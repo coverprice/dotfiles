@@ -12,6 +12,7 @@ fi
 alias python='/usr/bin/python3'
 
 export KUBECONFIG=~/.secrets/kube-config-prod-v1472
+export SHELLCHECK_OPTS="-e SC1090 -e SC1091"
 
 function get_node_ip() {
   # Get a production node IP
@@ -29,9 +30,9 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 [[ -f /usr/bin/virtualenvwrapper.sh ]] && source /usr/bin/virtualenvwrapper.sh
 
 function work() {
-  local venv=$1
-  workon "${venv}"
-  if [[ $? != 0 ]] ; then
+  local - venv=$1
+  set -e
+  if ! workon "${venv}" ; then
     return
   fi
   cd "${VIRTUAL_ENV}"
