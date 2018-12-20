@@ -8,11 +8,11 @@ Grabbing the latest version:
     set -e -x -o pipefail
     cd ~
     TMPDIR=$(mktemp -d)
-    git clone --depth=1 https://github.com/coverprice/dotfiles.git ${TMPDIR}
-    rm -rf ${TMPDIR}/.git
-    mv -f ${TMPDIR}/.[^.]* .
+    git clone --depth=1 https://github.com/coverprice/dotfiles.git "${TMPDIR}"
+    rm -rf "${TMPDIR}/.git"
+    mv -f "${TMPDIR}"/.[^.]* .
     mkdir -p ~/.vim/autoload ~/.vim/bundle
     curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-    cd ~/.vim/bundle
-    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git
+    git clone --depth=1 https://github.com/vim-syntastic/syntastic.git ~/.vim/bundle/syntastic
+    sudo dnf install -y ShellCheck python3-flake8
     EOF
