@@ -10,7 +10,7 @@ fi
 # This lets gpg-agent work correctly within tmux
 export GPG_TTY=$(tty)
 export GOPATH=$HOME/gocode
-PATH=$PATH:$HOME/.local/bin:$HOME/bin:$GOPATH/bin
+PATH="${PATH}:${HOME}/.local/bin:${HOME}/bin:${GOPATH}/bin"
 
 export FIGNORE=".o:~:.pyc:.pyo"
 
@@ -33,17 +33,6 @@ git config --global core.excludesfile ~/.gitignore_global
 alias sc='systemctl'
 alias sreload='systemctl daemon-reload'
 alias srestart='systemctl restart'
-
-# Clone the latest dotfiles into the home directory
-function get_dotfiles() {
-    set -ex
-    pushd ~
-    TMPDIR=$(mkdir -d)
-    git clone --depth=1 https://github.com/coverprice/dotfiles.git ${TMPDIR}
-    rm ${TMPDIR}/.git
-    mv -f ${TMPDIR}/.[^.]* .
-    popd
-}
 
 function fix_time() {
   # Reset the time because the VM gets out of sync with the actual time.
