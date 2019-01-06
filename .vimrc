@@ -12,6 +12,7 @@ set laststatus=2
 let &titleold="bash"
 autocmd Filetype python setlocal expandtab
 autocmd Filetype ruby setlocal expandtab
+autocmd FileType javascript setlocal expandtab tabstop=2 shiftwidth=2
 
 "Note: tmux should be set to use TERM=screen-256color, as xterm-256color does
 "not render correctly.
@@ -45,3 +46,5 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_sh_checkers = ['shellcheck']
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exe = 'npx eslint'
