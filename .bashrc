@@ -1,4 +1,5 @@
 # .bashrc
+# shellcheck disable=SC2034
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -13,6 +14,18 @@ alias python='/usr/bin/python3'
 
 export KUBECONFIG=~/.secrets/kube-config-prod-v1472
 export SHELLCHECK_OPTS="-e SC1090 -e SC1091"
+export FIGNORE=".o:__pycache__:.pyc"
+
+COLOR_BLUE="\[\033[0;34m\]"
+COLOR_LIGHT_BLUE="\[\033[0;36m\]"
+COLOR_RED="\[\033[0;31m\]"
+COLOR_LIGHT_RED="\[\033[1;31m\]"
+COLOR_GREEN="\[\033[0;32m\]"
+COLOR_LIGHT_GREEN="\[\033[1;32m\]"
+COLOR_WHITE="\[\033[1;37m\]"
+COLOR_LIGHT_GRAY="\[\033[0;37m\]"
+COLOR_BLACK="\[\033[0;30m\]"
+COLOR_RESET="\[\e[0m\]"
 
 function get_node_ip() {
   # Get a production node IP
@@ -21,6 +34,15 @@ function get_node_ip() {
    | .status.addresses[] | select(.type=="InternalIP")
    | .address' \
    | head -1
+}
+
+function viack() {
+  # shellcheck disable=SC2046
+  vi $(ack -l "$@")
+}
+
+function tempdir() {
+  cd "$(mktemp -d)"
 }
 
 # Virtualenv / Virtualenvwrapper stuff
@@ -55,3 +77,24 @@ function virtualenv_auto_activate() {
   done
 }
 virtualenv_auto_activate
+
+function virtual_env_prompt() {
+  [[ -n $VIRTUAL_ENV ]] && printf "%s(%s) " "${COLOR_WHITE}" "$(basename "${VIRTUAL_ENV}")"
+}
+
+
+# Helper function for our fancy prompt.
+function git_branch_prompt() {
+  local branch
+  branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's#* \(.*\)#\1#')
+  if [[ -n $branch ]] ; then
+    printf " %s%s " "${COLOR_WHITE}" "${branch}"
+  fi
+}
+
+function prompt_update() {
+  PS1="$(virtual_env_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}\\W${COLOR_LIGHT_BLUE}]$(git_branch_prompt)${COLOR_RESET}\$ "
+}
+PROMPT_COMMAND=prompt_update
+PS2='> '
+PS4='+ '
