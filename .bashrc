@@ -93,7 +93,7 @@ function git_branch_prompt() {
 }
 
 function prompt_update() {
-  PS1="$(virtual_env_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}\\W${COLOR_LIGHT_BLUE}]$(git_branch_prompt)${COLOR_RESET}\$ "
+  PS1="$(virtual_env_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}${PWD/#${HOME}/\~}${COLOR_LIGHT_BLUE}]$(git_branch_prompt)${COLOR_RESET}\$ "
 }
 PROMPT_COMMAND=prompt_update
 PS2='> '
