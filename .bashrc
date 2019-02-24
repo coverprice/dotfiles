@@ -79,7 +79,7 @@ function virtualenv_auto_activate() {
 virtualenv_auto_activate
 
 function virtual_env_prompt() {
-  [[ -n $VIRTUAL_ENV ]] && printf "%s(%s) " "${COLOR_WHITE}" "$(basename "${VIRTUAL_ENV}")"
+  [[ -n $VIRTUAL_ENV ]] && printf "%s(%s) " "${COLOR_LIGHT_BLUE}" "$(basename "${VIRTUAL_ENV}")"
 }
 
 
@@ -88,12 +88,12 @@ function git_branch_prompt() {
   local branch
   branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's#* \(.*\)#\1#')
   if [[ -n $branch ]] ; then
-    printf " %s%s " "${COLOR_WHITE}" "${branch}"
+    printf "%s%s " "${COLOR_WHITE}" "${branch}"
   fi
 }
 
 function prompt_update() {
-  PS1="$(virtual_env_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}${PWD/#${HOME}/\~}${COLOR_LIGHT_BLUE}]$(git_branch_prompt)${COLOR_RESET}\$ "
+  PS1="$(virtual_env_prompt)$(git_branch_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}${PWD/#${HOME}/\~}${COLOR_LIGHT_BLUE}]${COLOR_RESET}\\$ "
 }
 PROMPT_COMMAND=prompt_update
 PS2='> '
