@@ -16,30 +16,21 @@ that feature.
 
 This workflow allows the user to submit PRs for _each branch_, which means:
 - Each PR is significantly smaller and more focused, and thus easier and quicker to review.
-- Colleagues can start reviewing PRs earlier in development, rather than waiting until
-  the last branch is ready.
-- Automated test-run feedback is quicker and more focused.
+- Feedback from automated tests and colleagues arrives faster, because they can start
+  testing/reviewing PRs earlier in development, vs waiting until the last branch is ready.
 
 However the downside is that that this workflow requires the developer to carefully maintain
 each branch. This document describes how to perform the common tasks.
 
-## Starting layout
-
-In the following examples, we'll use this layout of branches:
-
-                       --+--+ branch_02
-                      /
-               --+-+-+        branch_01
-              /
-    ---+--+--+                master
-
 
 ## Creating a sub-branch from an existing branch
 
-Pattern:
+*Pattern:*
+
     git checkout -b <new branch> <parent branch>
 
-Example:
+*Example:*
+
     git checkout -b branch_03 branch_02
 
                               +      branch_03
@@ -50,25 +41,23 @@ Example:
               /
     ---+--+--+                       master
  
-    git checkout -b <new branch> <parent branch>
-
 
 ## Rebasing after an intermediate branch changes
 
-If an intermediate branch is added to (say as the result of code review feedback)
-then these changes must be incorporated into the child branch (and possibly
-recursively the child of _that_ child, and so on).
+If commits are added to an intermediate branch (ex. code review feedback)
+then these changes must be incorporated into the child branch(es).
 
-Example:
+*Example:*
 
-`A` and `B` were added on `branch_01` after `branch_02` was made. We want to rebase
-`branch_02` onto the tip of `branch_01`.
+Commits `A` and `B` were added on `branch_01`.
 
                        --+--+ branch_02
                       /
                --+-+-+--A-B   branch_01
               /
     ---+--+--+                master
+
+To rebase `branch_02` to the tip of `branch_01`:
 
     git checkout branch_02
     git merge branch_01
@@ -82,14 +71,12 @@ Example:
 If the merge can't be simply fast-forwarded, then `C` _may_ be created as to store
 any resolved conflicts.
 
-Alternative:
-It's possibly to try rebasing `branch_02` on top of `branch_01`. But doing so means that
-any merge conflicts must be resolved for _every commit_. So `git merge` is the recommended
-way, since that will do it in one go.
+*Alternative:* It's possibly to try rebasing `branch_02` on top of `branch_01`.
+But doing so means that any merge conflicts must be resolved for _every commit_.
+So `git merge` is the recommended way, since that will do it in one go.
 
     git checkout branch_02
     git rebase branch_01
-
 
                             --+--+ branch_02
                            /
@@ -100,7 +87,7 @@ way, since that will do it in one go.
 
 ## Re-parenting a branch after an intermediate branch was merged
 
-Say we start with this layout.
+We start with this layout.
 
                        --+--+ branch_02
                       /
@@ -109,7 +96,6 @@ Say we start with this layout.
     ---+--+--+                master
 
 The `branch_01` PR is approved and landed upstream. So we do a `git pull` to bring it up-to-date:
-
 
     git checkout master
     git pull upstream master
@@ -131,13 +117,15 @@ Alternatively, someone squashed and landed `branch_01` locally, which amounts to
 Now the contents of `branch_01` are on master, as commit `Y`, and `branch_01` is no longer
 useful. `branch_02` needs to be re-parented onto its new parent, `master`:
 
-Pattern:
+*Pattern:*
+
     git rebase --onto <new parent> <old parent> <branch to re-parent>
 
-Example:
+*Example:*
+
     git rebase --onto master branch_01 branch_02
 
-               --+-+-X        branch_01   [Can be deleted]
+               --+-+-X        branch_01   [No longer useful]
               /
              |         --+--+ branch_02
              |        /
