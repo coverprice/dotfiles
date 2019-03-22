@@ -61,6 +61,11 @@ function work() {
   echo "${VIRTUAL_ENV}" > ".venv"
 }
 
+# Reset the time because the VM gets out of sync with the actual time.
+function fix_time() {
+  sudo systemctl restart systemd-timesyncd.service
+}
+
 # Looks for a .venv file in the PWD or above, and activates it. Used when tmux
 # creates a new pane in the current directory, which by default won't inherit
 # the current virtualenv environment.
