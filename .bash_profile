@@ -7,8 +7,6 @@ fi
 
 # User specific environment and startup programs
 
-# This lets gpg-agent work correctly within tmux
-export GPG_TTY=$(tty)
 export GOPATH=$HOME/gocode
 PATH="${PATH}:${HOME}/.local/bin:${HOME}/bin:${GOPATH}/bin"
 
@@ -34,7 +32,13 @@ alias sc='systemctl'
 alias sreload='systemctl daemon-reload'
 alias srestart='systemctl restart'
 
-function fix_time() {
-  # Reset the time because the VM gets out of sync with the actual time.
-  sudo systemctl restart systemd-timesyncd.service
+# Clone the latest dotfiles into the home directory
+function get_dotfiles() {
+    set -ex
+    pushd ~
+    TMPDIR=$(mkdir -d)
+    git clone --depth=1 https://github.com/coverprice/dotfiles.git "${TMPDIR}"
+    rm "${TMPDIR}/.git"
+    mv -f "${TMPDIR}/".[^.]* .
+    popd
 }

@@ -10,10 +10,11 @@ set incsearch
 syntax on
 set laststatus=2
 let &titleold="bash"
-autocmd Filetype python setlocal expandtab
+autocmd Filetype python setlocal expandtab colorcolumn=120
 autocmd Filetype ruby setlocal expandtab
-autocmd FileType javascript setlocal expandtab tabstop=2 shiftwidth=2
-autocmd FileType htmldjango setlocal expandtab tabstop=2 shiftwidth=2
+autocmd FileType javascript setlocal expandtab tabstop=2 shiftwidth=2 colorcolumn=120
+autocmd FileType htmldjango setlocal expandtab tabstop=2 shiftwidth=2 colorcolumn=120
+autocmd FileType html setlocal expandtab tabstop=2 shiftwidth=2 colorcolumn=120
 autocmd FileType sh setlocal expandtab tabstop=2 shiftwidth=2
 
 "Note: tmux should be set to use TERM=screen-256color, as xterm-256color does
@@ -41,6 +42,7 @@ nnoremap [15~ <Esc>:n<CR>
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
+set statusline+=%l
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -49,4 +51,5 @@ let g:syntastic_check_on_wq = 0
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_sh_checkers = ['shellcheck']
 let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_javascript_eslint_exe = 'npx babel-eslint'
+" let g:syntastic_javascript_eslint_exe = 'npx babel-eslint'
+let b:syntastic_javascript_eslint_exec = system('npm-which babel-eslint')
