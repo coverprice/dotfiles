@@ -71,7 +71,7 @@ function cdat() {
 }
 
 function cdlibs() {
-  local - dir="${VIRTUAL_ENV}/lib/python3.7/site-packages"
+  local - dir="${VIRTUAL_ENV}/lib/python3.9/site-packages"
   [[ -d $dir ]] && cd "${dir}"
 }
 
@@ -108,6 +108,12 @@ function randpw() {
   openssl rand -base64 32
 }
 
+function allbranches() {
+  for dir in ~/venvs/?li ; do
+    printf "%s: %s\n" "$(basename "${dir}")" "$(git --git-dir "${dir}/li/.git" rev-parse --abbrev-ref HEAD)"
+  done
+}
+
 # Looks for a .venv file in the PWD or above, and activates it. Used when tmux
 # creates a new pane in the current directory, which by default won't inherit
 # the current virtualenv environment.
@@ -133,7 +139,7 @@ function virtual_env_prompt() {
 # Helper function for our fancy prompt.
 function git_branch_prompt() {
   local branch
-  branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's#* \(.*\)#\1#')
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
   if [[ -n $branch ]] ; then
     printf "%s%s " "${COLOR_WHITE}" "${branch}"
   fi
