@@ -10,13 +10,31 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-alias python='/usr/bin/python3'
+# alias python='/usr/bin/python3'
 
 # This lets gpg-agent work correctly within tmux
 # shellcheck disable=SC2155
 export GPG_TTY=$(tty)
 export SHELLCHECK_OPTS="-e SC1090 -e SC1091"
 export FIGNORE=".o:__pycache__:.pyc"
+
+export EDITOR=/usr/bin/vim
+
+export PATH="${PATH}:${HOME}/.local/bin"
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias .......="cd ../../../../../.."
+alias ........="cd ../../../../../../.."
+alias .........="cd ../../../../../../../.."
+alias ..........="cd ../../../../../../../../.."
+alias ...........="cd ../../../../../../../../../.."
+alias ............="cd ../../../../../../../../../../.."
+alias .............="cd ../../../../../../../../../../../.."
+alias tm="tmux attach || tmux"
 
 COLOR_BLUE="\[\033[0;34m\]"
 COLOR_LIGHT_BLUE="\[\033[0;36m\]"
@@ -38,52 +56,13 @@ function tempdir() {
   cd "$(mktemp -d)"
 }
 
-# Virtualenv / Virtualenvwrapper stuff
-export WORKON_HOME="${HOME}/venvs"
-export PROJECT_HOME="${HOME}/venvs"
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-[[ -f /usr/bin/virtualenvwrapper.sh ]] && source /usr/bin/virtualenvwrapper.sh
-
-function work() {
-  local - venv=$1
-  set -e
-  if [[ -z $venv ]] ; then
-    echo "You must specify a virtualenv name."
-    return
-  fi
-  if ! workon "${venv}" ; then
-    echo "Could not switch to virtualenv '${venv}'"
-    return
-  fi
-  cd "${VIRTUAL_ENV}"
-  echo "${VIRTUAL_ENV}" > ".venv"
-  # shellcheck disable=SC2155
-  local src_top="$(readlink -f "./li/tools/src")"
-  if [[ -d $src_top ]] ; then
-    cd "${src_top}"
-    export CDPATH=".:${src_top}:${src_top}/atlas"
-  fi
-}
-
-function cdat() {
-  local - dir="${VIRTUAL_ENV}/li/tools/src/atlas"
-  [[ -d $dir ]] && cd "${dir}"
-}
-
-function cdlibs() {
-  local - dir="${VIRTUAL_ENV}/lib/python3.9/site-packages"
-  [[ -d $dir ]] && cd "${dir}"
-}
-
-function cddpp() {
-  local - dir="${VIRTUAL_ENV}/li/tools/src/dpp"
-  [[ -d $dir ]] && cd "${dir}"
-}
-
-function cdsrc() {
-  local - dir="${VIRTUAL_ENV}/li/tools/src"
-  [[ -d $dir ]] && cd "${dir}"
-}
+# Infra toolbox nav
+# shellcheck disable=SC2155
+export VENV_HOME="$(readlink -f "${HOME}/venvs")"
+# shellcheck disable=SC2155
+export REPO_HOME="$(readlink -f "${HOME}/repos")"
+_infra_toolbox_nav=~/repos/infra-toolbox-nav/infra-toolbox_nav.sh
+[[ -f $_infra_toolbox_nav ]] && source "${_infra_toolbox_nav}"
 
 # Reset the time because the VM gets out of sync with the actual time.
 function fix_time() {
@@ -108,45 +87,30 @@ function randpw() {
   openssl rand -base64 32
 }
 
-function allbranches() {
-  for dir in ~/venvs/?li ; do
-    printf "%s: %s\n" "$(basename "${dir}")" "$(git --git-dir "${dir}/li/.git" rev-parse --abbrev-ref HEAD)"
-  done
-}
-
-# Looks for a .venv file in the PWD or above, and activates it. Used when tmux
-# creates a new pane in the current directory, which by default won't inherit
-# the current virtualenv environment.
-function virtualenv_auto_activate() {
-  local cur_dir
-  cur_dir=$(readlink -f "${PWD}")
-  while [[ $cur_dir =~ ^"${HOME}" ]]; do
-    if [[ -f "${cur_dir}/.venv" ]] && [[ -f "${cur_dir}/bin/activate" ]] ; then
-      source "${cur_dir}/bin/activate"
-      return
-    else
-      cur_dir=$(dirname "${cur_dir}")
-    fi
-  done
-}
-virtualenv_auto_activate
-
-function virtual_env_prompt() {
-  [[ -n $VIRTUAL_ENV ]] && printf "%s(%s) " "${COLOR_LIGHT_BLUE}" "$(basename "${VIRTUAL_ENV}")"
-}
-
-
-# Helper function for our fancy prompt.
-function git_branch_prompt() {
-  local branch
-  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-  if [[ -n $branch ]] ; then
-    printf "%s%s " "${COLOR_WHITE}" "${branch}"
+function cdtop() {
+  local git_top
+  git_top="$(git rev-parse --show-toplevel 2>/dev/null)"
+  if [[ -n $git_top ]] ; then
+    cd "${git_top}"
+  else
+    echo "Current directory is not in a git repo"
   fi
 }
 
 function prompt_update() {
-  PS1="$(virtual_env_prompt)$(git_branch_prompt)${COLOR_LIGHT_BLUE}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}${PWD/#${HOME}/\~}${COLOR_LIGHT_BLUE}]${COLOR_RESET}\\$ "
+  local branch git_top repo_name git_branch_prompt
+  git_top="$(git rev-parse --show-toplevel 2>/dev/null)"
+  if [[ -n $git_top ]] ; then
+    repo_name="$(basename "${git_top}")"
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    git_branch_prompt="$(printf "%s[%s%s %s%s] " "${COLOR_WHITE}" "${COLOR_RESET}" "${repo_name}" "${COLOR_WHITE}" "${branch}")"
+  fi
+  _ACTIVE_PROJECT_PROMPT=
+  if [[ -n $git_top ]] && [[ $(type -t _active_project_prompt) == "function" ]]; then
+     # Needs to be done outside of a sub-shell as it modifies vars
+     _active_project_prompt "${git_top}"
+  fi
+  PS1="${git_branch_prompt}${_ACTIVE_PROJECT_PROMPT}${COLOR_GREEN}[${COLOR_LIGHT_GRAY}\\u ${COLOR_GREEN}${PWD/#${HOME}/\~}${COLOR_LIGHT_BLUE}]${COLOR_RESET}\\$ "
 }
 PROMPT_COMMAND=prompt_update
 PS2='> '
